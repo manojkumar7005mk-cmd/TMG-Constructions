@@ -1,0 +1,1447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TMG Construction – Build Your Dream</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Poppins:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+  /* ===== VARIABLES ===== */
+  :root {
+    --red: #e82127;
+    --red-dark: #b01519;
+    --red-glow: rgba(232,33,39,0.35);
+    --white: #f5f5f5;
+    --grey: #9a9a9a;
+    --grey-light: #c8c8c8;
+    --dark: #0a0a0a;
+    --dark2: #111111;
+    --dark3: #181818;
+    --dark4: #212121;
+    --glass: rgba(255,255,255,0.04);
+    --glass-border: rgba(255,255,255,0.08);
+    --glass-strong: rgba(255,255,255,0.09);
+    --shadow: 0 20px 60px rgba(0,0,0,0.6);
+    --transition: all 0.4s cubic-bezier(0.23,1,0.32,1);
+  }
+
+  /* ===== RESET ===== */
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--dark);
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+  a { text-decoration: none; color: inherit; }
+  img { display: block; width: 100%; }
+
+  /* ===== CUSTOM CURSOR ===== */
+  #cursor {
+    width: 12px; height: 12px;
+    background: var(--red);
+    border-radius: 50%;
+    position: fixed; top:0; left:0;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%);
+    transition: transform 0.1s, width 0.3s, height 0.3s, background 0.3s;
+  }
+  #cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--red);
+    border-radius: 50%;
+    position: fixed; top:0; left:0;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%);
+    transition: transform 0.18s ease-out, width 0.3s, height 0.3s, border-color 0.3s;
+    opacity: 0.7;
+  }
+  body:hover #cursor { opacity:1; }
+
+  /* ===== LOADER ===== */
+  #loader {
+    position: fixed; inset: 0;
+    background: var(--dark);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10000;
+    transition: opacity 0.6s ease, visibility 0.6s ease;
+  }
+  #loader.hide { opacity:0; visibility:hidden; }
+  .loader-inner {
+    text-align: center;
+  }
+  .loader-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 10vw, 6rem);
+    letter-spacing: 0.1em;
+    color: var(--white);
+    line-height: 1;
+  }
+  .loader-logo span { color: var(--red); }
+  .loader-bar {
+    width: 200px; height: 3px;
+    background: var(--dark4);
+    margin: 20px auto 0;
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .loader-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--red), #ff6b6b);
+    width: 0%;
+    border-radius: 2px;
+    animation: loadFill 1.8s ease forwards;
+  }
+  @keyframes loadFill { to { width:100%; } }
+
+  /* ===== NAV ===== */
+  nav {
+    position: fixed; top:0; left:0; right:0;
+    z-index: 1000;
+    padding: 0 5%;
+    height: 72px;
+    display: flex; align-items: center; justify-content: space-between;
+    transition: var(--transition);
+  }
+  nav.scrolled {
+    background: rgba(10,10,10,0.92);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow: 0 4px 30px rgba(0,0,0,0.5);
+    height: 64px;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    letter-spacing: 0.1em;
+  }
+  .nav-logo span { color: var(--red); }
+  .nav-links {
+    display: flex; gap: 2.5rem; list-style: none;
+  }
+  .nav-links a {
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    position: relative;
+    transition: color 0.3s;
+  }
+  .nav-links a::after {
+    content:'';
+    position: absolute; bottom:-4px; left:0;
+    width:0; height:2px;
+    background: var(--red);
+    transition: width 0.3s ease;
+  }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a:hover::after { width:100%; }
+  .nav-cta {
+    background: var(--red);
+    color: var(--white) !important;
+    padding: 0.5rem 1.4rem;
+    border-radius: 4px;
+    font-size: 0.75rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em;
+    transition: background 0.3s, transform 0.2s !important;
+  }
+  .nav-cta::after { display:none !important; }
+  .nav-cta:hover { background: var(--red-dark) !important; transform: translateY(-1px); }
+  .hamburger {
+    display: none;
+    flex-direction: column; gap: 5px;
+    cursor: pointer; padding: 4px;
+  }
+  .hamburger span {
+    display: block; width: 26px; height: 2px;
+    background: var(--white);
+    transition: var(--transition);
+    border-radius: 2px;
+  }
+  .mobile-menu {
+    display: none;
+    position: fixed; top:0; left:0; right:0; bottom:0;
+    background: rgba(10,10,10,0.98);
+    backdrop-filter: blur(20px);
+    z-index: 999;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 2.5rem;
+    opacity:0; visibility:hidden;
+    transition: opacity 0.4s, visibility 0.4s;
+  }
+  .mobile-menu.open { opacity:1; visibility:visible; display:flex; }
+  .mobile-menu a {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.15em;
+    color: var(--grey-light);
+    transition: color 0.3s;
+  }
+  .mobile-menu a:hover { color: var(--red); }
+  .mobile-close {
+    position: absolute; top:24px; right:5%;
+    font-size: 2rem; cursor:pointer; color: var(--grey);
+  }
+
+  /* ===== SECTION BASE ===== */
+  section { padding: 110px 5%; }
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--red);
+    margin-bottom: 1rem;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::before {
+    content:'';
+    display: block; width:30px; height:2px;
+    background: var(--red);
+  }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    letter-spacing: 0.05em;
+    line-height: 1;
+    color: var(--white);
+  }
+  .section-title span { color: var(--red); }
+
+  /* ===== REVEAL ===== */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.active { opacity:1; transform: translateY(0); }
+  .reveal-left { opacity:0; transform: translateX(-50px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal-left.active { opacity:1; transform:translateX(0); }
+  .reveal-right { opacity:0; transform: translateX(50px); transition: opacity 0.8s ease, transform 0.8s ease; }
+  .reveal-right.active { opacity:1; transform:translateX(0); }
+
+  /* ===== HERO ===== */
+  #hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex; align-items: center;
+    padding: 0 5%;
+    overflow: hidden;
+  }
+  .hero-bg {
+    position: absolute; inset:0;
+    background:
+      linear-gradient(135deg, rgba(10,10,10,0.97) 0%, rgba(10,10,10,0.75) 50%, rgba(232,33,39,0.12) 100%),
+      url('https://images.unsplash.com/photo-1486325212027-8081e485255e?w=1800&q=80') center/cover no-repeat;
+    z-index: 0;
+  }
+  .hero-bg::after {
+    content:'';
+    position:absolute; inset:0;
+    background: radial-gradient(ellipse 80% 70% at 70% 50%, rgba(232,33,39,0.08) 0%, transparent 70%);
+  }
+  .hero-grid {
+    position: absolute; inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 60px 60px;
+    z-index: 1;
+    animation: gridMove 20s linear infinite;
+    opacity: 0.4;
+  }
+  @keyframes gridMove {
+    from { background-position: 0 0; }
+    to { background-position: 60px 60px; }
+  }
+  .hero-content {
+    position: relative; z-index: 2;
+    max-width: 820px;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(10px);
+    padding: 0.4rem 1rem;
+    border-radius: 100px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--grey-light);
+    margin-bottom: 2rem;
+    animation: fadeDown 0.8s ease 0.3s both;
+  }
+  .hero-badge .dot {
+    width: 7px; height: 7px; border-radius:50%;
+    background: var(--red);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 var(--red-glow)} 50%{box-shadow:0 0 0 8px transparent} }
+  .hero-h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(5rem, 13vw, 10rem);
+    letter-spacing: 0.03em;
+    line-height: 0.9;
+    color: var(--white);
+    animation: fadeUp 0.9s ease 0.5s both;
+  }
+  .hero-h1 .line-red { color: var(--red); display:block; }
+  .hero-sub {
+    font-size: clamp(0.9rem, 1.5vw, 1.1rem);
+    font-weight: 300;
+    color: var(--grey);
+    margin: 1.8rem 0 3rem;
+    letter-spacing: 0.05em;
+    max-width: 480px;
+    line-height: 1.7;
+    animation: fadeUp 0.9s ease 0.7s both;
+  }
+  .hero-actions {
+    display: flex; gap: 1.2rem; flex-wrap: wrap;
+    animation: fadeUp 0.9s ease 0.9s both;
+  }
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--red);
+    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    border-radius: 4px;
+    border: none; cursor: pointer;
+    position: relative; overflow: hidden;
+    transition: background 0.3s, transform 0.25s, box-shadow 0.3s;
+    box-shadow: 0 8px 30px var(--red-glow);
+  }
+  .btn-primary:hover {
+    background: var(--red-dark);
+    transform: translateY(-3px);
+    box-shadow: 0 14px 40px var(--red-glow);
+  }
+  .btn-primary .ripple {
+    position:absolute; border-radius:50%;
+    background: rgba(255,255,255,0.35);
+    transform: scale(0); animation: rippleAnim 0.6s linear;
+    pointer-events:none;
+  }
+  @keyframes rippleAnim { to { transform:scale(4); opacity:0; } }
+  .btn-outline {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: transparent;
+    color: var(--white);
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 1rem 2.2rem;
+    border-radius: 4px;
+    border: 1px solid var(--glass-border);
+    cursor: pointer;
+    transition: var(--transition);
+    backdrop-filter: blur(8px);
+  }
+  .btn-outline:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.06);
+    transform: translateY(-3px);
+  }
+  .hero-stats {
+    position: absolute; bottom:60px; left:5%; right:5%;
+    z-index: 2;
+    display: flex; gap: 3px;
+    animation: fadeUp 0.9s ease 1.1s both;
+  }
+  .stat-card {
+    flex:1; max-width: 160px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(16px);
+    padding: 1.2rem 1.4rem;
+    border-radius: 6px;
+  }
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.2rem;
+    color: var(--red);
+    letter-spacing: 0.05em;
+    line-height:1;
+  }
+  .stat-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--grey);
+    margin-top: 4px;
+  }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes fadeDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ===== ABOUT ===== */
+  #about {
+    background: var(--dark2);
+    position: relative;
+    overflow: hidden;
+  }
+  #about::before {
+    content:'';
+    position:absolute; top:-200px; right:-200px;
+    width:600px; height:600px;
+    background: radial-gradient(circle, rgba(232,33,39,0.07) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 80px;
+    align-items: center;
+  }
+  .about-img-wrap {
+    position: relative;
+  }
+  .about-img-main {
+    border-radius: 8px;
+    overflow:hidden;
+    aspect-ratio: 4/5;
+    position:relative;
+  }
+  .about-img-main img {
+    width:100%; height:100%; object-fit:cover;
+    transition: transform 0.6s ease;
+  }
+  .about-img-main:hover img { transform:scale(1.04); }
+  .about-img-main::after {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(to top, rgba(10,10,10,0.5), transparent 50%);
+    border-radius: 8px;
+    pointer-events:none;
+  }
+  .about-accent-box {
+    position:absolute; bottom:-30px; right:-30px;
+    background: var(--red);
+    width:160px; height:160px;
+    border-radius: 6px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    z-index:2;
+    box-shadow: 0 20px 50px rgba(232,33,39,0.4);
+  }
+  .about-accent-box .num {
+    font-family:'Bebas Neue',sans-serif;
+    font-size: 3.2rem;
+    color:var(--white);
+    letter-spacing:0.05em;
+    line-height:1;
+  }
+  .about-accent-box .txt {
+    font-size:0.68rem;
+    font-weight:600;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:rgba(255,255,255,0.8);
+    margin-top:4px;
+  }
+  .about-content { padding-right: 20px; }
+  .about-desc {
+    font-size: 1rem;
+    font-weight:300;
+    color: var(--grey);
+    line-height: 1.85;
+    margin: 1.6rem 0 2.4rem;
+  }
+  .about-engineer {
+    display:flex; align-items:center; gap: 1.2rem;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    padding: 1.2rem 1.6rem;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+  }
+  .eng-avatar {
+    width:52px; height:52px;
+    background: linear-gradient(135deg, var(--red), var(--red-dark));
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.4rem;
+    color:var(--white);
+    flex-shrink:0;
+    box-shadow: 0 4px 20px var(--red-glow);
+  }
+  .eng-info .name {
+    font-weight:700;
+    font-size:0.95rem;
+    color:var(--white);
+  }
+  .eng-info .role {
+    font-size:0.72rem;
+    color: var(--grey);
+    letter-spacing:0.08em;
+    margin-top:2px;
+  }
+  .features-list {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .feature-item {
+    display:flex; align-items:center; gap:10px;
+    font-size:0.82rem;
+    font-weight:500;
+    color:var(--grey-light);
+  }
+  .feature-item i { color:var(--red); font-size:0.85rem; }
+
+  /* ===== SERVICES ===== */
+  #services { background: var(--dark); }
+  .services-header { text-align:center; max-width:600px; margin:0 auto 70px; }
+  .services-header .section-label { justify-content:center; }
+  .services-header .section-label::before { display:none; }
+  .services-header p {
+    font-size:0.95rem; font-weight:300; color:var(--grey); line-height:1.8; margin-top:1rem;
+  }
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+  .service-card {
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+    border-radius: 12px;
+    padding: 2.5rem 2rem;
+    position:relative;
+    overflow:hidden;
+    cursor:default;
+    transition: transform 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+  }
+  .service-card::before {
+    content:'';
+    position:absolute; inset:0;
+    background: linear-gradient(135deg, rgba(232,33,39,0.06) 0%, transparent 60%);
+    opacity:0;
+    transition: opacity 0.4s ease;
+    border-radius: 12px;
+  }
+  .service-card::after {
+    content:'';
+    position:absolute; bottom:0; left:0; right:0;
+    height:3px;
+    background: linear-gradient(90deg, var(--red), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.5s ease;
+  }
+  .service-card:hover {
+    transform: translateY(-10px);
+    border-color: rgba(232,33,39,0.3);
+    box-shadow: 0 30px 60px rgba(0,0,0,0.4), 0 0 40px rgba(232,33,39,0.08);
+  }
+  .service-card:hover::before { opacity:1; }
+  .service-card:hover::after { transform: scaleX(1); }
+  .service-icon-wrap {
+    width:64px; height:64px;
+    background: linear-gradient(135deg, rgba(232,33,39,0.15), rgba(232,33,39,0.05));
+    border: 1px solid rgba(232,33,39,0.2);
+    border-radius: 12px;
+    display:flex; align-items:center; justify-content:center;
+    margin-bottom: 2rem;
+    font-size:1.5rem;
+    color: var(--red);
+    transition: background 0.4s, box-shadow 0.4s;
+  }
+  .service-card:hover .service-icon-wrap {
+    background: linear-gradient(135deg, rgba(232,33,39,0.3), rgba(232,33,39,0.1));
+    box-shadow: 0 8px 25px var(--red-glow);
+  }
+  .service-num {
+    position:absolute; top:1.5rem; right:1.8rem;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:3.5rem;
+    color: rgba(255,255,255,0.03);
+    letter-spacing:0.05em;
+    line-height:1;
+    pointer-events:none;
+    transition: color 0.4s;
+  }
+  .service-card:hover .service-num { color: rgba(232,33,39,0.06); }
+  .service-title {
+    font-weight:700;
+    font-size:1.05rem;
+    color:var(--white);
+    margin-bottom:0.8rem;
+  }
+  .service-desc {
+    font-size:0.82rem; font-weight:300;
+    color:var(--grey);
+    line-height:1.7;
+  }
+  .service-arrow {
+    display:inline-flex; align-items:center; gap:6px;
+    margin-top:1.5rem;
+    font-size:0.72rem; font-weight:700;
+    letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--red);
+    opacity:0;
+    transform:translateX(-10px);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .service-card:hover .service-arrow { opacity:1; transform:translateX(0); }
+
+  /* ===== PROJECTS ===== */
+  #projects { background: var(--dark2); }
+  .projects-header {
+    display:flex; justify-content:space-between; align-items:flex-end;
+    margin-bottom: 60px;
+    flex-wrap:wrap; gap:1rem;
+  }
+  .projects-header p {
+    font-size:0.88rem; font-weight:300; color:var(--grey); max-width:320px; line-height:1.7;
+  }
+  .gallery-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 16px;
+  }
+  .gallery-item {
+    position:relative; overflow:hidden; border-radius:8px;
+    cursor:pointer;
+  }
+  .gallery-item:nth-child(1) { grid-row: span 2; }
+  .gallery-item img {
+    width:100%; height:100%; object-fit:cover;
+    transition: transform 0.7s cubic-bezier(0.23,1,0.32,1);
+    aspect-ratio: 4/3;
+    display:block;
+  }
+  .gallery-item:nth-child(1) img { aspect-ratio: unset; height:100%; }
+  .gallery-overlay {
+    position:absolute; inset:0;
+    background: linear-gradient(to top, rgba(10,10,10,0.85) 0%, transparent 50%);
+    opacity:0;
+    transition: opacity 0.5s ease;
+    display:flex; align-items:flex-end;
+    padding:1.5rem;
+  }
+  .gallery-item:hover img { transform:scale(1.08); }
+  .gallery-item:hover .gallery-overlay { opacity:1; }
+  .gallery-info .gtitle {
+    font-family:'Bebas Neue',sans-serif; font-size:1.3rem;
+    letter-spacing:0.08em; color:var(--white);
+  }
+  .gallery-info .gsub {
+    font-size:0.7rem; font-weight:500; color:var(--red); letter-spacing:0.1em;
+    text-transform:uppercase; margin-top:2px;
+  }
+  .gallery-zoom {
+    position:absolute; top:1rem; right:1rem;
+    width:38px; height:38px;
+    background: rgba(232,33,39,0.9);
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--white);
+    font-size:0.85rem;
+    opacity:0;
+    transform:scale(0.6);
+    transition: opacity 0.4s, transform 0.4s;
+  }
+  .gallery-item:hover .gallery-zoom { opacity:1; transform:scale(1); }
+
+  /* ===== CONTACT ===== */
+  #contact { background: var(--dark); }
+  .contact-wrapper {
+    display:grid; grid-template-columns: 1fr 1.2fr;
+    gap:80px; align-items:start;
+  }
+  .contact-info-title {
+    font-size:1rem; font-weight:300; color:var(--grey);
+    line-height:1.8; margin: 1.5rem 0 3rem;
+  }
+  .contact-items { display:flex; flex-direction:column; gap:1.6rem; }
+  .contact-item {
+    display:flex; gap:1.2rem; align-items:flex-start;
+  }
+  .contact-icon {
+    width:46px; height:46px; flex-shrink:0;
+    background: rgba(232,33,39,0.1);
+    border: 1px solid rgba(232,33,39,0.2);
+    border-radius:10px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--red); font-size:1rem;
+  }
+  .contact-item-text .label {
+    font-size:0.68rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--grey);
+  }
+  .contact-item-text .value {
+    font-size:0.9rem; font-weight:500; color:var(--white); margin-top:4px;
+  }
+  .contact-item-text a.value { transition:color 0.3s; }
+  .contact-item-text a.value:hover { color:var(--red); }
+  .map-wrap {
+    margin-top:2.5rem; border-radius:8px; overflow:hidden;
+    border:1px solid var(--glass-border);
+    height:220px;
+  }
+  .map-wrap iframe { width:100%; height:100%; border:0; display:block; filter:grayscale(80%) contrast(1.1); }
+  /* Contact Form */
+  .contact-form-wrap {
+    background: var(--glass-strong);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 3rem;
+  }
+  .form-title {
+    font-family:'Bebas Neue',sans-serif; font-size:2rem; letter-spacing:0.1em;
+    color:var(--white); margin-bottom:2rem;
+  }
+  .form-title span { color:var(--red); }
+  .form-group { margin-bottom:1.5rem; }
+  .form-group label {
+    display:block;
+    font-size:0.7rem; font-weight:700; letter-spacing:0.12em; text-transform:uppercase; color:var(--grey);
+    margin-bottom:0.6rem;
+  }
+  .form-group input,
+  .form-group textarea {
+    width:100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    color: var(--white);
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.88rem;
+    outline: none;
+    transition: border-color 0.3s, background 0.3s, box-shadow 0.3s;
+    resize: vertical;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: rgba(232,33,39,0.5);
+    background: rgba(232,33,39,0.04);
+    box-shadow: 0 0 0 3px rgba(232,33,39,0.1);
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder { color:rgba(255,255,255,0.2); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+  .btn-submit {
+    width:100%;
+    background: var(--red);
+    color:var(--white);
+    border:none; cursor:pointer;
+    font-family:'Poppins',sans-serif;
+    font-size:0.8rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+    padding:1.1rem;
+    border-radius:6px;
+    position:relative; overflow:hidden;
+    transition: background 0.3s, transform 0.25s, box-shadow 0.3s;
+    box-shadow: 0 8px 30px var(--red-glow);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+  }
+  .btn-submit:hover { background:var(--red-dark); transform:translateY(-2px); box-shadow:0 14px 40px var(--red-glow); }
+  .form-success {
+    display:none; text-align:center; padding:1rem;
+    color:#4caf50; font-size:0.85rem; font-weight:600;
+    background:rgba(76,175,80,0.08); border:1px solid rgba(76,175,80,0.2);
+    border-radius:6px; margin-top:1rem;
+  }
+
+  /* ===== FOOTER ===== */
+  footer {
+    background: var(--dark2);
+    border-top: 1px solid var(--glass-border);
+    padding: 60px 5% 40px;
+  }
+  .footer-grid {
+    display:grid; grid-template-columns: 2fr 1fr 1fr;
+    gap:60px; margin-bottom:50px;
+  }
+  .footer-brand .logo {
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2rem; letter-spacing:0.1em;
+    margin-bottom:1rem;
+  }
+  .footer-brand .logo span { color:var(--red); }
+  .footer-brand p {
+    font-size:0.82rem; font-weight:300; color:var(--grey); line-height:1.8; max-width:280px;
+  }
+  .footer-social {
+    display:flex; gap:0.8rem; margin-top:1.8rem;
+  }
+  .social-btn {
+    width:40px; height:40px;
+    background:var(--glass); border:1px solid var(--glass-border);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--grey); font-size:0.9rem;
+    transition: background 0.3s, color 0.3s, border-color 0.3s, transform 0.3s;
+  }
+  .social-btn:hover {
+    background:var(--red); color:var(--white);
+    border-color:var(--red); transform:translateY(-4px);
+    box-shadow:0 8px 20px var(--red-glow);
+  }
+  .footer-col h4 {
+    font-size:0.72rem; font-weight:700; letter-spacing:0.15em; text-transform:uppercase;
+    color:var(--white); margin-bottom:1.5rem;
+    padding-bottom:0.8rem; border-bottom:1px solid var(--glass-border);
+  }
+  .footer-links { list-style:none; display:flex; flex-direction:column; gap:0.8rem; }
+  .footer-links a {
+    font-size:0.82rem; font-weight:300; color:var(--grey);
+    display:flex; align-items:center; gap:8px;
+    transition: color 0.3s, padding-left 0.3s;
+  }
+  .footer-links a::before { content:'—'; font-size:0.6rem; color:var(--red); opacity:0; transition:opacity 0.3s; }
+  .footer-links a:hover { color:var(--white); padding-left:6px; }
+  .footer-links a:hover::before { opacity:1; }
+  .footer-bottom {
+    padding-top:30px; border-top:1px solid var(--glass-border);
+    display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:1rem;
+  }
+  .footer-bottom p {
+    font-size:0.75rem; color:var(--grey);
+  }
+  .footer-bottom span { color:var(--red); }
+
+  /* ===== WHATSAPP FLOAT ===== */
+  #wa-float {
+    position:fixed; bottom:32px; right:32px;
+    width:58px; height:58px;
+    background:#25d366;
+    border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--white); font-size:1.5rem;
+    z-index:900;
+    box-shadow:0 6px 24px rgba(37,211,102,0.45);
+    transition: transform 0.3s, box-shadow 0.3s;
+    animation: waFloat 3s ease-in-out infinite;
+  }
+  #wa-float:hover { transform:scale(1.1); box-shadow:0 10px 35px rgba(37,211,102,0.6); }
+  @keyframes waFloat {
+    0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)}
+  }
+  #wa-float .wa-tooltip {
+    position:absolute; right:72px; top:50%; transform:translateY(-50%);
+    background:rgba(37,211,102,0.95); color:var(--white);
+    font-size:0.72rem; font-weight:700; white-space:nowrap;
+    padding:0.4rem 0.9rem; border-radius:100px;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.3s, transform 0.3s;
+    transform:translateY(-50%) translateX(10px);
+  }
+  #wa-float:hover .wa-tooltip { opacity:1; transform:translateY(-50%) translateX(0); }
+
+  /* ===== SCROLL TOP ===== */
+  #scroll-top {
+    position:fixed; bottom:32px; left:32px;
+    width:44px; height:44px;
+    background:var(--glass);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(10px);
+    border-radius:8px;
+    display:flex; align-items:center; justify-content:center;
+    color:var(--grey); font-size:0.9rem;
+    z-index:900; cursor:pointer;
+    opacity:0; pointer-events:none;
+    transition: opacity 0.3s, color 0.3s, background 0.3s, transform 0.3s;
+  }
+  #scroll-top.show { opacity:1; pointer-events:all; }
+  #scroll-top:hover { color:var(--white); background:var(--red); border-color:var(--red); transform:translateY(-3px); }
+
+  /* ===== DIVIDER ===== */
+  .red-divider {
+    height:1px;
+    background: linear-gradient(90deg, transparent, var(--red), transparent);
+    opacity:0.3;
+    margin:0 5%;
+  }
+
+  /* ===== CREDENTIAL CARD ===== */
+  .credential-card {
+    margin-top: 2.2rem;
+    display: flex; gap: 2rem; flex-wrap: wrap;
+    background: linear-gradient(135deg, rgba(232,33,39,0.08) 0%, rgba(255,255,255,0.03) 100%);
+    border: 1px solid rgba(232,33,39,0.25);
+    border-radius: 12px;
+    padding: 1.6rem 1.8rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .credential-card::before {
+    content:'';
+    position:absolute; top:0; left:0;
+    width:4px; height:100%;
+    background: linear-gradient(to bottom, var(--red), var(--red-dark));
+    border-radius: 12px 0 0 12px;
+  }
+  .cred-left { flex: 0 0 auto; }
+  .cred-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem; letter-spacing: 0.08em;
+    color: var(--white); margin-bottom: 0.7rem;
+  }
+  .cred-quals { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .cred-badge {
+    font-size: 0.65rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.25rem 0.7rem;
+    border-radius: 100px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: var(--grey-light);
+  }
+  .cred-badge.licensed {
+    background: rgba(232,33,39,0.15);
+    border-color: rgba(232,33,39,0.35);
+    color: #ff7b7e;
+  }
+  .cred-badge.licensed i { margin-right: 4px; }
+  .cred-right {
+    flex: 1; display: flex; flex-direction: column; gap: 0.5rem; justify-content: center;
+    border-left: 1px solid var(--glass-border); padding-left: 1.8rem;
+  }
+  .cred-contact-row {
+    font-size: 0.76rem; font-weight: 400; color: var(--grey);
+    display: flex; align-items: center; gap: 8px;
+  }
+  .cred-contact-row i { color: var(--red); font-size: 0.7rem; width: 14px; }
+
+  /* ===== RESPONSIVE ===== */
+  @media(max-width:1100px){
+    .services-grid { grid-template-columns: repeat(2,1fr); }
+    .about-grid { gap:50px; }
+  }
+  @media(max-width:900px){
+    .about-grid { grid-template-columns:1fr; }
+    .about-img-wrap { max-width:480px; }
+    .about-accent-box { width:130px; height:130px; bottom:-20px; right:-10px; }
+    .contact-wrapper { grid-template-columns:1fr; gap:50px; }
+    .footer-grid { grid-template-columns:1fr 1fr; gap:40px; }
+    .gallery-grid { grid-template-columns:repeat(2,1fr); }
+    .gallery-item:nth-child(1) { grid-row:span 1; }
+    .gallery-item:nth-child(1) img { aspect-ratio: 4/3; height:auto; }
+  }
+  @media(max-width:768px){
+    .nav-links { display:none; }
+    .hamburger { display:flex; }
+    section { padding:80px 5%; }
+    .services-grid { grid-template-columns:1fr 1fr; }
+    .hero-stats { flex-wrap:wrap; gap:8px; }
+    .stat-card { flex: 0 0 calc(50% - 4px); max-width:unset; }
+    .form-row { grid-template-columns:1fr; }
+    .footer-grid { grid-template-columns:1fr; gap:40px; }
+    .footer-bottom { flex-direction:column; text-align:center; }
+    .contact-form-wrap { padding:2rem; }
+  }
+  @media(max-width:600px){
+    .credential-card { flex-direction: column; gap: 1rem; }
+    .cred-right { border-left: none; padding-left: 0; border-top: 1px solid var(--glass-border); padding-top: 1rem; }
+  }
+  @media(max-width:500px){
+    .services-grid { grid-template-columns:1fr; }
+    .gallery-grid { grid-template-columns:1fr; }
+    .hero-h1 { font-size: clamp(4rem, 18vw, 7rem); }
+    .hero-stats { bottom:30px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-inner">
+    <div class="loader-logo">TMG <span>CON</span></div>
+    <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#hero" class="nav-logo">TMG <span>CON</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta">Get Quote</a></li>
+  </ul>
+  <div class="hamburger" id="hamburger" aria-label="Open Menu">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <span class="mobile-close" id="mobileClose"><i class="fa fa-times"></i></span>
+  <a href="#about" class="mobile-link">About</a>
+  <a href="#services" class="mobile-link">Services</a>
+  <a href="#projects" class="mobile-link">Projects</a>
+  <a href="#contact" class="mobile-link">Contact</a>
+</div>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="dot"></span>
+      Premium Construction Services
+    </div>
+    <h1 class="hero-h1">
+      Build Your<span class="line-red">Dream.</span>
+    </h1>
+    <p class="hero-sub">Professional Construction &amp; Planning Services — turning your vision into lasting structures built with precision and care.</p>
+    <div class="hero-actions">
+      <a href="#contact" class="btn-primary" id="hero-cta">
+        <i class="fa fa-phone"></i> Contact Now
+      </a>
+      <a href="#services" class="btn-outline">
+        <i class="fa fa-arrow-down"></i> Our Services
+      </a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-num" data-target="15">0</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-target="350">0</div>
+      <div class="stat-label">Projects Done</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-target="280">0</div>
+      <div class="stat-label">Happy Clients</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" data-target="25">0</div>
+      <div class="stat-label">Expert Engineers</div>
+    </div>
+  </div>
+</section>
+
+<div class="red-divider"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-grid">
+    <div class="about-img-wrap reveal-left">
+      <div class="about-img-main">
+        <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80" alt="TMG Construction Team">
+      </div>
+      <div class="about-accent-box">
+        <div class="num">15+</div>
+        <div class="txt">Years of Excellence</div>
+      </div>
+    </div>
+    <div class="about-content reveal-right">
+      <div class="section-label">Who We Are</div>
+      <h2 class="section-title">TMG <span>Construction</span></h2>
+      <p class="about-desc">
+        TMG Construction is a premier construction and planning company based in Theni, Tamil Nadu. 
+        With over 15 years of hands-on experience, we specialize in residential and commercial projects — 
+        delivering precision-engineered structures from foundation to finish. Our team blends technical 
+        expertise with creative vision to bring your dream spaces to life.
+      </p>
+      <div class="about-engineer">
+        <div class="eng-avatar">TV</div>
+        <div class="eng-info">
+          <div class="name">Er. T. Velmurugan</div>
+          <div class="role">DCE · BE · Licensed Engineer &amp; Founder</div>
+        </div>
+      </div>
+      <div class="features-list">
+        <div class="feature-item"><i class="fa fa-check-circle"></i> Expert Planning &amp; Design</div>
+        <div class="feature-item"><i class="fa fa-check-circle"></i> Govt. Approval Ready</div>
+        <div class="feature-item"><i class="fa fa-check-circle"></i> On-Time Delivery</div>
+        <div class="feature-item"><i class="fa fa-check-circle"></i> Budget Transparent</div>
+        <div class="feature-item"><i class="fa fa-check-circle"></i> Structural Safety</div>
+        <div class="feature-item"><i class="fa fa-check-circle"></i> Post-Build Support</div>
+      </div>
+      <!-- Credential Card -->
+      <div class="credential-card">
+        <div class="cred-left">
+          <div class="cred-name">Er. T. Velmurugan</div>
+          <div class="cred-quals">
+            <span class="cred-badge">DCE</span>
+            <span class="cred-badge">BE</span>
+            <span class="cred-badge licensed"><i class="fa fa-id-badge"></i> Licensed Engineer</span>
+          </div>
+        </div>
+        <div class="cred-right">
+          <div class="cred-contact-row"><i class="fa fa-phone"></i> 6381674603</div>
+          <div class="cred-contact-row"><i class="fa fa-phone"></i> 8508786388</div>
+          <div class="cred-contact-row"><i class="fa fa-envelope"></i> Velutharmar@gmail.com</div>
+          <div class="cred-contact-row"><i class="fa fa-map-marker-alt"></i> Vaigai Road, K.Vilaku, Theni‑625512</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="red-divider"></div>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="services-header reveal">
+    <div class="section-label">What We Offer</div>
+    <h2 class="section-title">Our <span>Services</span></h2>
+    <p>From blueprint to building — we handle every stage of your construction journey with expert care and professionalism.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal" style="transition-delay:0.1s">
+      <div class="service-num">01</div>
+      <div class="service-icon-wrap"><i class="fa fa-drafting-compass"></i></div>
+      <div class="service-title">Model Plan</div>
+      <p class="service-desc">Detailed architectural model plans crafted with precision — 2D layouts and 3D visualizations to bring your vision to life before the first brick is laid.</p>
+      <div class="service-arrow"><i class="fa fa-arrow-right"></i> Learn More</div>
+    </div>
+    <div class="service-card reveal" style="transition-delay:0.2s">
+      <div class="service-num">02</div>
+      <div class="service-icon-wrap"><i class="fa fa-file-signature"></i></div>
+      <div class="service-title">Approval Plan</div>
+      <p class="service-desc">Complete government and municipal approval documentation prepared with accuracy — ensuring your project is legally compliant and fast-tracked.</p>
+      <div class="service-arrow"><i class="fa fa-arrow-right"></i> Learn More</div>
+    </div>
+    <div class="service-card reveal" style="transition-delay:0.3s">
+      <div class="service-num">03</div>
+      <div class="service-icon-wrap"><i class="fa fa-calculator"></i></div>
+      <div class="service-title">Building Estimate</div>
+      <p class="service-desc">Transparent and detailed cost estimations covering materials, labor, and timelines — so you can plan your budget with complete confidence.</p>
+      <div class="service-arrow"><i class="fa fa-arrow-right"></i> Learn More</div>
+    </div>
+    <div class="service-card reveal" style="transition-delay:0.4s">
+      <div class="service-num">04</div>
+      <div class="service-icon-wrap"><i class="fa fa-hard-hat"></i></div>
+      <div class="service-title">Building Contract</div>
+      <p class="service-desc">End-to-end building contracts with legally sound agreements — from ground breaking to final handover, managed by our experienced team.</p>
+      <div class="service-arrow"><i class="fa fa-arrow-right"></i> Learn More</div>
+    </div>
+  </div>
+</section>
+
+<div class="red-divider"></div>
+
+<!-- PROJECTS -->
+<section id="projects">
+  <div class="projects-header">
+    <div class="reveal-left">
+      <div class="section-label">Our Portfolio</div>
+      <h2 class="section-title">Recent <span>Projects</span></h2>
+    </div>
+    <div class="reveal-right">
+      <p>A showcase of our finest builds — residential homes, commercial spaces, and landmark structures across Theni and beyond.</p>
+    </div>
+  </div>
+  <div class="gallery-grid">
+    <div class="gallery-item reveal-left">
+      <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80" alt="Residential Building">
+      <div class="gallery-overlay">
+        <div class="gallery-info">
+          <div class="gtitle">Luxury Residence</div>
+          <div class="gsub">Residential · Theni</div>
+        </div>
+      </div>
+      <div class="gallery-zoom"><i class="fa fa-expand"></i></div>
+    </div>
+    <div class="gallery-item reveal">
+      <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=800&q=80" alt="Commercial Office">
+      <div class="gallery-overlay">
+        <div class="gallery-info">
+          <div class="gtitle">Corporate Office</div>
+          <div class="gsub">Commercial · Madurai</div>
+        </div>
+      </div>
+      <div class="gallery-zoom"><i class="fa fa-expand"></i></div>
+    </div>
+    <div class="gallery-item reveal" style="transition-delay:0.1s">
+      <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" alt="Modern Villa">
+      <div class="gallery-overlay">
+        <div class="gallery-info">
+          <div class="gtitle">Modern Villa</div>
+          <div class="gsub">Residential · Theni</div>
+        </div>
+      </div>
+      <div class="gallery-zoom"><i class="fa fa-expand"></i></div>
+    </div>
+    <div class="gallery-item reveal" style="transition-delay:0.2s">
+      <img src="https://images.unsplash.com/photo-1555636222-cae831e670b3?w=800&q=80" alt="Apartment Complex">
+      <div class="gallery-overlay">
+        <div class="gallery-info">
+          <div class="gtitle">Apartment Complex</div>
+          <div class="gsub">Multi-Unit · Periyakulam</div>
+        </div>
+      </div>
+      <div class="gallery-zoom"><i class="fa fa-expand"></i></div>
+    </div>
+    <div class="gallery-item reveal" style="transition-delay:0.3s">
+      <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=800&q=80" alt="Industrial">
+      <div class="gallery-overlay">
+        <div class="gallery-info">
+          <div class="gtitle">Industrial Shed</div>
+          <div class="gsub">Industrial · Bodinayakanur</div>
+        </div>
+      </div>
+      <div class="gallery-zoom"><i class="fa fa-expand"></i></div>
+    </div>
+  </div>
+</section>
+
+<div class="red-divider"></div>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrapper">
+    <div class="reveal-left">
+      <div class="section-label">Get In Touch</div>
+      <h2 class="section-title">Let's <span>Build</span> Together</h2>
+      <p class="contact-info-title">Ready to start your project? Reach out and our team will connect with you within 24 hours.</p>
+      <div class="contact-items">
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa fa-phone"></i></div>
+          <div class="contact-item-text">
+            <div class="label">Phone</div>
+            <a href="tel:6381674603" class="value">6381674603</a>
+            <br>
+            <a href="tel:8508786388" class="value">8508786388</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa fa-envelope"></i></div>
+          <div class="contact-item-text">
+            <div class="label">Email</div>
+            <a href="mailto:Velutharmar@gmail.com" class="value">Velutharmar@gmail.com</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon"><i class="fa fa-map-marker-alt"></i></div>
+          <div class="contact-item-text">
+            <div class="label">Office Address</div>
+            <div class="value">Vaigai Road, K.Vilaku,<br>Theni – 625512, Tamil Nadu</div>
+          </div>
+        </div>
+      </div>
+      <div class="map-wrap">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62727.32!2d77.47!3d10.00!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b076b0a7d3e58a5%3A0x6b0f8bc6e2f5ecb7!2sTheni%2C%20Tamil%20Nadu%20625512!5e0!3m2!1sen!2sin!4v1620000000000"
+          allowfullscreen loading="lazy" referrerpolicy="no-referrer-when-downgrade"
+          title="TMG Construction Location">
+        </iframe>
+      </div>
+    </div>
+    <div class="contact-form-wrap reveal-right">
+      <div class="form-title">Send a <span>Message</span></div>
+      <form id="contactForm">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fname">Your Name</label>
+            <input type="text" id="fname" placeholder="John Doe" required>
+          </div>
+          <div class="form-group">
+            <label for="fphone">Phone Number</label>
+            <input type="tel" id="fphone" placeholder="+91 98765 43210" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="femail">Email Address</label>
+          <input type="email" id="femail" placeholder="your@email.com">
+        </div>
+        <div class="form-group">
+          <label for="fservice">Service Required</label>
+          <input type="text" id="fservice" placeholder="e.g. Model Plan, Building Contract...">
+        </div>
+        <div class="form-group">
+          <label for="fmessage">Your Message</label>
+          <textarea id="fmessage" rows="5" placeholder="Tell us about your project..." required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          <i class="fa fa-paper-plane"></i> Send Message
+        </button>
+        <div class="form-success" id="formSuccess">
+          ✅ Message sent! We'll contact you within 24 hours.
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <div class="logo">TMG <span>Construction</span></div>
+      <p>Building dreams into reality since 2009. Trusted by hundreds of families and businesses across Tamil Nadu for quality construction and planning services.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-btn" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-btn" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+        <a href="https://wa.me/916381674603" class="social-btn" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="mailto:Velutharmar@gmail.com" class="social-btn" aria-label="Email"><i class="far fa-envelope"></i></a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h4>Quick Links</h4>
+      <ul class="footer-links">
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Our Services</h4>
+      <ul class="footer-links">
+        <li><a href="#services">Model Plan</a></li>
+        <li><a href="#services">Approval Plan</a></li>
+        <li><a href="#services">Building Estimate</a></li>
+        <li><a href="#services">Building Contract</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 <span>TMG Construction</span>. All rights reserved.</p>
+    <p>Er. T. Velmurugan · DCE · BE · <span>Licensed Engineer</span> · Theni</p>
+  </div>
+</footer>
+
+<!-- WHATSAPP FLOAT -->
+<a href="https://wa.me/916381674603?text=Hello%20TMG%20Construction%2C%20I%20am%20interested%20in%20your%20services." id="wa-float" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+  <i class="fab fa-whatsapp"></i>
+  <span class="wa-tooltip">Chat on WhatsApp</span>
+</a>
+
+<!-- SCROLL TOP -->
+<button id="scroll-top" aria-label="Scroll to top"><i class="fa fa-chevron-up"></i></button>
+
+<script>
+  /* === CURSOR === */
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursor-ring');
+  let mx=0, my=0, rx=0, ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; cursor.style.left=mx+'px'; cursor.style.top=my+'px'; });
+  function animRing(){ rx+=(mx-rx)*0.12; ry+=(my-ry)*0.12; cursorRing.style.left=rx+'px'; cursorRing.style.top=ry+'px'; requestAnimationFrame(animRing); }
+  animRing();
+  document.querySelectorAll('a,button,.service-card,.gallery-item,.social-btn').forEach(el => {
+    el.addEventListener('mouseenter', () => { cursor.style.width='18px'; cursor.style.height='18px'; cursorRing.style.width='50px'; cursorRing.style.height='50px'; cursorRing.style.borderColor='rgba(232,33,39,0.5)'; });
+    el.addEventListener('mouseleave', () => { cursor.style.width='12px'; cursor.style.height='12px'; cursorRing.style.width='36px'; cursorRing.style.height='36px'; cursorRing.style.borderColor='var(--red)'; });
+  });
+
+  /* === LOADER === */
+  window.addEventListener('load', () => {
+    setTimeout(() => { document.getElementById('loader').classList.add('hide'); }, 2000);
+  });
+
+  /* === NAVBAR === */
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 60);
+    document.getElementById('scroll-top').classList.toggle('show', window.scrollY > 400);
+  });
+
+  /* === HAMBURGER === */
+  const hamburger = document.getElementById('hamburger');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileClose = document.getElementById('mobileClose');
+  hamburger.addEventListener('click', () => { mobileMenu.classList.add('open'); });
+  mobileClose.addEventListener('click', () => { mobileMenu.classList.remove('open'); });
+  document.querySelectorAll('.mobile-link').forEach(link => {
+    link.addEventListener('click', () => { mobileMenu.classList.remove('open'); });
+  });
+
+  /* === SCROLL TOP === */
+  document.getElementById('scroll-top').addEventListener('click', () => { window.scrollTo({top:0,behavior:'smooth'}); });
+
+  /* === SCROLL REVEAL === */
+  const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('active'); observer.unobserve(e.target); } });
+  }, { threshold: 0.1, rootMargin:'0px 0px -50px 0px' });
+  revealEls.forEach(el => observer.observe(el));
+
+  /* === COUNTER ANIMATION === */
+  function animateCounter(el){
+    const target = parseInt(el.dataset.target);
+    const dur = 2000;
+    const step = target / (dur / 16);
+    let cur = 0;
+    const t = setInterval(() => {
+      cur += step;
+      if(cur >= target){ el.textContent = target + (target > 100 ? '+' : '+'); clearInterval(t); }
+      else { el.textContent = Math.floor(cur); }
+    }, 16);
+  }
+  const statsObserver = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.querySelectorAll('[data-target]').forEach(animateCounter);
+        statsObserver.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  const statsSection = document.querySelector('.hero-stats');
+  if(statsSection) statsObserver.observe(statsSection);
+
+  /* === RIPPLE EFFECT === */
+  function addRipple(e){
+    const btn = e.currentTarget;
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(btn.offsetWidth, btn.offsetHeight) * 2;
+    const x = e.clientX - rect.left - size/2;
+    const y = e.clientY - rect.top - size/2;
+    const ripple = document.createElement('span');
+    ripple.className = 'ripple';
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${x}px;top:${y}px`;
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+  }
+  document.querySelectorAll('.btn-primary, .btn-submit').forEach(btn => btn.addEventListener('click', addRipple));
+
+  /* === CONTACT FORM === */
+  document.getElementById('contactForm').addEventListener('submit', function(e){
+    e.preventDefault();
+    const btn = this.querySelector('.btn-submit');
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Sending...';
+    btn.disabled = true;
+    setTimeout(() => {
+      btn.innerHTML = '<i class="fa fa-check"></i> Sent!';
+      document.getElementById('formSuccess').style.display = 'block';
+      this.reset();
+      setTimeout(() => {
+        btn.innerHTML = '<i class="fa fa-paper-plane"></i> Send Message';
+        btn.disabled = false;
+        document.getElementById('formSuccess').style.display = 'none';
+      }, 4000);
+    }, 1800);
+  });
+
+  /* === STAGGER REVEALS === */
+  document.querySelectorAll('.service-card').forEach((card, i) => {
+    card.style.transitionDelay = (i * 0.1) + 's';
+  });
+  document.querySelectorAll('.gallery-item').forEach((item, i) => {
+    item.style.transitionDelay = (i * 0.08) + 's';
+  });
+</script>
+</body>
+</html>
